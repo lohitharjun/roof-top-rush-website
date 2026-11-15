@@ -1,0 +1,3 @@
+# Replace the publisher ID below with yours once AdSense approves you.
+# Your ID is shown in AdSense under Account > Settings. Keep the rest of the line as is.
+google.com, pub-0000000000000000, DIRECT, f08c47fec0942fa0
