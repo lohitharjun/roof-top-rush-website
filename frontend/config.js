@@ -2,7 +2,7 @@
 window.RR_CONFIG = {
   // Your backend address. Local test: http://localhost:8000
   // After deploying on Render: https://your-service-name.onrender.com (no trailing slash)
-  API_URL: "http://localhost:8000",
+  API_URL: "https://roof-top-rush-website.onrender.com",
 
   // Google AdSense (leave empty until your account is approved)
   ADSENSE_CLIENT: "",   // looks like "ca-pub-1234567890123456"
