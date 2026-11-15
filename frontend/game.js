@@ -602,8 +602,8 @@ function landCar(g) {
   // Judge only how far the car spun. The old check also counted the nose-up tilt from the ramp,
   // which made a frontflip need ~0.7 rad more spin than a backflip.
   const a = (((car.rot + Math.PI) % TAU) + TAU) % TAU - Math.PI;
-  const flips = Math.floor((Math.abs(car.rot) + 0.8) / TAU);
-  const ok = Math.abs(a) < 0.8;
+  const flips = Math.floor((Math.abs(car.rot) + 1.0) / TAU);
+  const ok = Math.abs(a) < 1.0;
   const dir = car.rot < 0 ? 'Backflip' : 'Frontflip';
   car.air = false; car.vy = 0; car.av = 0;
   if (ok) {
@@ -1082,7 +1082,8 @@ function press() {
   unlock();
   if (state === 'play' && !car) { held = true; jumpBuf = BUFFER; }
 }
-function release() { held = false; kLeft = kRight = kJump = false; }
+function release() { held = false; kLeft = kRight = kJump = false; }      // everything off (window lost focus)
+function releaseTap() { held = false; }                                  // one finger or button lifted: the car buttons release themselves
 const typing = (t) => t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA');
 
 stage.addEventListener('pointerdown', (e) => {
@@ -1090,8 +1091,8 @@ stage.addEventListener('pointerdown', (e) => {
   press();
 });
 stage.addEventListener('contextmenu', (e) => e.preventDefault());
-window.addEventListener('pointerup', release);
-window.addEventListener('pointercancel', release);
+window.addEventListener('pointerup', releaseTap);
+window.addEventListener('pointercancel', releaseTap);
 window.addEventListener('blur', release);
 
 window.addEventListener('keydown', (e) => {
