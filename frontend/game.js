@@ -599,9 +599,11 @@ function groundAt(x) {
 function landCar(g) {
   const TAU = Math.PI * 2;
   car.y = g.y;
-  const a = (((car.ang + Math.PI) % TAU) + TAU) % TAU - Math.PI;
+  // Judge only how far the car spun. The old check also counted the nose-up tilt from the ramp,
+  // which made a frontflip need ~0.7 rad more spin than a backflip.
+  const a = (((car.rot + Math.PI) % TAU) + TAU) % TAU - Math.PI;
   const flips = Math.floor((Math.abs(car.rot) + 0.8) / TAU);
-  const ok = Math.abs(a + g.slope) < 0.8;
+  const ok = Math.abs(a) < 0.8;
   const dir = car.rot < 0 ? 'Backflip' : 'Frontflip';
   car.air = false; car.vy = 0; car.av = 0;
   if (ok) {
@@ -1116,7 +1118,7 @@ window.addEventListener('keydown', (e) => {
 });
 window.addEventListener('keyup', (e) => {
   const c = e.code;
-  if (c === 'Space' || c === 'ArrowUp' || c === 'KeyW') { release(); kJump = false; }
+  if (c === 'Space' || c === 'ArrowUp' || c === 'KeyW') { held = false; kJump = false; }
   if (c === 'KeyA' || c === 'ArrowLeft') kLeft = false;
   if (c === 'KeyD' || c === 'ArrowRight') kRight = false;
 });
