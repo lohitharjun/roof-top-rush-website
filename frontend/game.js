@@ -25,6 +25,8 @@ const WORLD_LEN = [150, 200];                    // metres spent inside a world
 const PORTAL_H = 64;               // jump higher than this to skip a portal
 const HANG = 46;                   // hanging hazards end this far above the floor
 const REVIVE_MAX = 2;
+const COIN_R = 6;                  // coin half-size in pixels (was 4)
+const COIN_PAD = 4;                // extra pickup forgiveness around the player
 
 const COL = {
   sky: '#a8a8b6', far: '#8e8e9e', mid: '#6e6e7f', near: '#505061',
@@ -650,7 +652,8 @@ function carUpdate() {
 
 function collectCoins(l, r, top, bottom) {
   for (const c of coins) {
-    if (!c.got && c.x + 4 > l - 1 && c.x - 4 < r + 1 && c.y + 4 > top - 1 && c.y - 4 < bottom + 1) {
+    const reach = COIN_R + COIN_PAD;
+    if (!c.got && c.x + reach > l && c.x - reach < r && c.y + reach > top && c.y - reach < bottom) {
       c.got = true; runCoins++; wallet++;
       beep(900, 1300, 0.05, 'square', 0.03);
     }
@@ -728,6 +731,7 @@ function update() {
 
   // --- playing ---
   simFrames++; anim++; rampFrames++;
+  shake = shake > 0.5 ? shake * 0.88 : 0;                         // let the screen shake fade out during play
   baseSpeed = Math.min(MAX_SPEED, START_SPEED + rampFrames * RAMP);
   speedScale += ((viewWorld ? WORLD_SPEED : 1) - speedScale) * 0.03;   // ease in and out of worlds
   iceBoost *= 0.97;
@@ -907,9 +911,9 @@ function drawBird(b) {
 function drawCoin(c) {
   const x = Math.round(c.x), y = Math.round(c.y);
   const w = (anim >> 3) % 4;                                        // slow spin
-  const cw = w === 0 || w === 2 ? 8 : (w === 1 ? 6 : 4);
-  rf('#a8801a', x - (cw >> 1), y - 4, cw, 8);
-  rf(COL.coin, x - (cw >> 1) + 1, y - 3, Math.max(1, cw - 2), 6);
+  const cw = w === 0 || w === 2 ? 12 : (w === 1 ? 9 : 6);
+  rf('#a8801a', x - (cw >> 1), y - COIN_R, cw, COIN_R * 2);
+  rf(COL.coin, x - (cw >> 1) + 1, y - COIN_R + 1, Math.max(1, cw - 2), COIN_R * 2 - 2);
 }
 
 function drawCarSprite(cx, y, ang) {
