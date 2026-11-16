@@ -1195,6 +1195,7 @@ function restart() {
   overToken++;
   fit(); reset();
   state = 'play'; show(null); $('hud').hidden = false;
+  fetchRunToken();
 }
 function toMenu() {
   overToken++;
@@ -1283,6 +1284,22 @@ function drawPreview() {
   ctx = saved;
 }
 
+/* ============ device secret + run token (anti-cheat, name ownership) ============ */
+let secret = store.get('rr_secret', '');          // random text only this browser knows; it keeps your leaderboard name yours
+if (!/^[a-f0-9]{32}$/.test(secret)) {
+  const bytes = crypto.getRandomValues(new Uint8Array(16));
+  secret = Array.from(bytes, (b) => b.toString(16).padStart(2, '0')).join('');
+  store.set('rr_secret', secret);
+}
+let runToken = '', tokenSeq = 0;
+async function fetchRunToken() {                  // asks the server to start the clock for this run
+  const mine = ++tokenSeq; runToken = '';
+  try {
+    const r = await api('/api/run/start', { method: 'POST' }, 20000);
+    if (mine === tokenSeq) runToken = r.token || '';
+  } catch (e) { /* offline: the score just will not post */ }
+}
+
 /* ============ game over + leaderboard (FastAPI backend) ============ */
 async function api(path, opts = {}, timeout = 65000) {
   if (!API) throw new Error('The leaderboard server is not set up yet.');
@@ -1322,7 +1339,7 @@ async function postAndLoad(token) {
   let note = '';
   if (finalDist >= 20 && finalDist > postedToday()) {
     try {
-      const r = await api('/api/scores', { method: 'POST', body: JSON.stringify({ name: myName, distance: finalDist, duration_ms: runMs }) });
+      const r = await api('/api/scores', { method: 'POST', body: JSON.stringify({ name: myName, distance: finalDist, duration_ms: runMs, token: runToken, secret }) });
       if (token !== overToken) return;
       store.set('rr_posted', JSON.stringify({ day: utcDay(), best: finalDist }));
       note = 'Score posted. You are #' + r.rank + ' all time' + (r.rank_week ? ' and #' + r.rank_week + ' this week' : '') + '.';
