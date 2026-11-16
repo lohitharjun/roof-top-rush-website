@@ -97,9 +97,23 @@ def rank_for(conn, distance: int, cutoff: int) -> int:
     return row[0] + 1
 
 
+_ready = False
+
+
+def ensure_db():
+    """Create the table on first use (and retry later if the database was unreachable at startup)."""
+    global _ready
+    if not _ready:
+        init_db()
+        _ready = True
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    init_db()
+    try:
+        ensure_db()
+    except Exception as exc:   # keep the server up so /health/db can show what is wrong
+        print("Database setup failed:", type(exc).__name__, exc, flush=True)
     yield
 
 
@@ -157,7 +171,20 @@ def root():
 
 @app.get("/health")
 def health():
-    return {"status": "ok"}
+    return {"status": "ok", "db": "postgres" if USE_PG else "sqlite"}
+
+
+@app.get("/health/db")
+def health_db():
+    """Open this address in a browser to check the database connection."""
+    kind = "postgres" if USE_PG else "sqlite"
+    try:
+        ensure_db()
+        with db() as conn:
+            conn.execute("SELECT 1").fetchone()
+        return {"status": "ok", "db": kind}
+    except Exception as exc:
+        return {"status": "error", "db": kind, "error": type(exc).__name__}
 
 
 @app.get("/api/leaderboard")
@@ -165,6 +192,7 @@ def leaderboard(limit: int = Query(10, ge=1, le=50), period: str = "all"):
     """Best score per player. period: all, week (last 7 days) or day (last 24 hours)."""
     if period not in PERIODS:
         raise HTTPException(status_code=400, detail="period must be all, week or day")
+    ensure_db()
     with db() as conn:
         rows = conn.execute(
             f"SELECT name, distance FROM ("
@@ -185,6 +213,7 @@ def submit_score(score: ScoreIn, request: Request):
     # A run can't cover more ground than top speed allows for its length.
     if score.distance > score.duration_ms / 1000 * MAX_SPEED_MPS + 30:
         raise HTTPException(status_code=400, detail="That score doesn't match the run time.")
+    ensure_db()
     with db() as conn:
         conn.execute(
             f"INSERT INTO scores (name, distance, created_at) VALUES ({PH}, {PH}, {PH})",
