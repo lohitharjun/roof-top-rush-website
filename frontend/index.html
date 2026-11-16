@@ -3,9 +3,17 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Roof Top Rift: a one-button rooftop runner</title>
+<title>Rooftop Rift: a one-button rooftop runner</title>
 <meta name="description" content="Run across the rooftops, jump through portals into hidden worlds, collect coins and unlock costumes. A free one-button runner for phones and computers.">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="theme-color" content="#1b1b24">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Rooftop Rift: a one-button rooftop runner">
+<meta property="og:description" content="Run the rooftops, jump the gaps and dive through portals into hidden worlds. Free, no download.">
+<meta property="og:image" content="store/feature-graphic-1024x500.png">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
@@ -14,7 +22,7 @@
 <body>
 
 <div id="stage" class="stage">
-  <canvas id="game" aria-label="Roof Top Rift game area" role="img"></canvas>
+  <canvas id="game" aria-label="Rooftop Rift game area" role="img"></canvas>
 
   <div class="hud" id="hud" hidden>
     <div class="hud-left">
@@ -29,7 +37,7 @@
 
   <!-- landing screen -->
   <section class="screen" id="scr-start">
-    <h1>Roof Top Rift</h1>
+    <h1>Rooftop Rift</h1>
     <p>Run the rooftops. Jump the gaps. Dive through portals into hidden worlds.</p>
     <form class="play-form" id="form-play">
       <label class="muted" for="name">Your name for the leaderboard</label>
@@ -115,14 +123,14 @@
     </section>
     <section>
       <h2>Portals and worlds</h2>
-      <p>Every so often a glowing portal appears on a rooftop. Run into it and you are pulled into a random hidden world, such as an abandoned apartment, underground tunnels or an industrial tunnel.</p>
+      <p>Every so often a glowing portal appears on a rooftop. Run into it and you are pulled into a random hidden world, such as an abandoned apartment, underground tunnels or an industrial tunnel, each with its own hazards. Jump over the portal if you would rather stay on the rooftops.</p>
       <p>Collect coins along the way. Spend them on hats and scarves, or on a revive when a run ends too soon.</p>
     </section>
   </div>
   <aside class="ad" data-slot="2" aria-label="Advertisement"></aside>
   <section class="about">
     <h2>About the game</h2>
-    <p>Roof Top Rift is a free browser game made by a student developer. There is nothing to download or install, and it runs on any modern phone, tablet or computer. Post your best distance to the leaderboard and see how far other runners got.</p>
+    <p>Rooftop Rift is a free browser game made by a student developer. There is nothing to download or install, and it runs on any modern phone, tablet or computer. Post your best distance to the leaderboard and see how far other runners got.</p>
   </section>
 </main>
 
@@ -134,5 +142,10 @@
 <script src="config.js"></script>
 <script src="ads.js"></script>
 <script src="game.js"></script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js').catch(() => {}); });
+}
+</script>
 </body>
 </html>
