@@ -4,6 +4,11 @@
   const c = window.RR_CONFIG || {};
   const slots = document.querySelectorAll('.ad');
 
+  // Inside the installed Android app (Play Store version) web ads are not allowed: hide them.
+  const inApp = (document.referrer || '').startsWith('android-app://') ||
+    (window.matchMedia && matchMedia('(display-mode: fullscreen), (display-mode: standalone)').matches);
+  if (inApp) { slots.forEach((el) => { el.hidden = true; }); return; }
+
   if (!c.ADSENSE_CLIENT) {
     slots.forEach((el) => {
       if (c.SHOW_AD_PLACEHOLDER) {
