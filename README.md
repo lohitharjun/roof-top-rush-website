@@ -1,4 +1,4 @@
-# Rooftop Rush
+# Roof Top Rift
 
 A one-button rooftop runner with portals, hidden worlds, coins, costumes, a global leaderboard and ad slots.
 
@@ -7,7 +7,7 @@ A one-button rooftop runner with portals, hidden worlds, coins, costumes, a glob
 **Backend notes:** `GET /api/leaderboard?period=all|week|day` returns the best score per player (names are matched ignoring upper/lower case; "week" and "day" are the last 7 days and last 24 hours). Names are checked against a small word filter, and you can add more words with a `BLOCKED_WORDS` environment variable on Render (comma separated). Scores faster than the game's top speed are rejected. If you only change the backend, redeploy just Render; if you only change the frontend, just push to Vercel.
 
 ```
-rooftop-rush/
+roof-top-rift/
   frontend/   static site (HTML, CSS, JS)  -> deploy on Vercel
   backend/    FastAPI leaderboard API      -> deploy on Render
 ```
@@ -41,7 +41,7 @@ Controls: Space / Up / W / click / tap to jump (hold = higher), P pause, M mute.
 Order matters a little: database, backend, frontend, then tell the backend the frontend address.
 
 ### a) Put the project on GitHub
-Create a repository and push the whole `rooftop-rush` folder (the `.gitignore` is already set).
+Create a repository and push the whole `roof-top-rift` folder (the `.gitignore` is already set).
 
 ### b) Database (so scores are not lost)
 Render's free web servers have a temporary disk, so a SQLite file is erased on every restart or redeploy. Use a free Postgres instead:
@@ -68,7 +68,7 @@ Free Render services go to sleep after about 15 minutes without visitors, and th
 3. **Root Directory:** `frontend`. **Framework Preset:** Other. Leave build and output settings empty. Deploy.
 
 ### e) Connect them
-In Render > Environment, set `ALLOWED_ORIGINS` to your Vercel address, for example `https://rooftop-rush.vercel.app` (no trailing slash; if you add a custom domain, list both separated by a comma). Save, Render redeploys. Then play a run and post a score.
+In Render > Environment, set `ALLOWED_ORIGINS` to your Vercel address, for example `https://roof-top-rift.vercel.app` (no trailing slash; if you add a custom domain, list both separated by a comma). Save, Render redeploys. Then play a run and post a score.
 
 If the leaderboard says offline, it is almost always one of: wrong `API_URL`, `ALLOWED_ORIGINS` not matching exactly, or Render still waking up.
 
@@ -78,8 +78,8 @@ If the leaderboard says offline, it is almost always one of: wrong `API_URL`, `A
 
 1. Get a **domain you own** (cheap ones cost a few hundred rupees a year) and add it in Vercel > Settings > Domains. AdSense is much more likely to approve a real domain than a free subdomain.
 2. Apply at adsense.google.com with that domain. You need to be 18+ and have a bank account for payouts.
-3. Before applying, fill in the date and email in `frontend/privacy.html`. Reviewers want a privacy policy and some real text on the page (the how-to-play and about sections count, and adding a few more short pages helps).
-4. When approved, AdSense gives you a **publisher ID** (`ca-pub-...`). Put it in `frontend/config.js` (`ADSENSE_CLIENT`), create two display ad units and paste their IDs into `ADSENSE_SLOT_1` and `ADSENSE_SLOT_2`. Put the same ID into `frontend/ads.txt`. Set `SHOW_AD_PLACEHOLDER` to `false`. Push to deploy.
+3. Before applying, fill in the date and email in `frontend/privacy.html`. Reviewers want a privacy policy and some real text on the page (the how-to-play and about sections count, and adding a few lines of detail helps).
+4. When approved, AdSense gives you a **publisher ID** (`ca-pub-...`). Put it in `frontend/config.js` (`ADSENSE_CLIENT`), create two display ad units and paste their IDs into `ADSENSE_SLOT_1` and `ADSENSE_SLOT_2`.
 
 Rules that protect your account: never click your own ads, never ask players to click them, and keep ads outside the game area (they already are). Earnings start small and grow with traffic.
 
